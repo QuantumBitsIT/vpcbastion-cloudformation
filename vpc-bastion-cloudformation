@@ -1,0 +1,2386 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "CloudFormation Template for Standard VPC - David Beach",
+    "Metadata": {
+        "AWS::CloudFormation::Interface": {
+            "ParameterGroups": [
+                {
+                    "Label": {
+                        "default": "Organizational Configuration"
+                    },
+                    "Parameters": [
+                        "OmnicomNetwork",
+                        "AgencyName",
+                        "AgencyCode",
+                        "vRACode",
+                        "OU",
+                        "PCode"
+                    ]
+                },
+                {
+                    "Label": {
+                        "default": "General Network Configuration"
+                    },
+                    "Parameters": [
+                        "AvailabilityZones",
+                        "VPCCIDR"
+                    ]
+                },
+                {
+                    "Label": {
+                        "default": "Network Configuration Availability Zone 1"
+                    },
+                    "Parameters": [
+                        "GatewaySubnetAZ1PubicCIDR",
+                        "DMZ1SubnetAZ1PubicCIDR",
+                        "DMZ2SubnetAZ1PrivateCIDR",
+                        "InsideSubnetAZ1PrivateCIDR",
+                        "MgmtSubnetAZ1PrivateCIDR"
+                    ]
+                },
+                {
+                    "Label": {
+                        "default": "Network Configuration Availability Zone 2"
+                    },
+                    "Parameters": [
+                        "GatewaySubnetAZ2PubicCIDR",
+                        "DMZ1SubnetAZ2PubicCIDR",
+                        "DMZ2SubnetAZ2PrivateCIDR",
+                        "InsideSubnetAZ2PrivateCIDR",
+                        "MgmtSubnetAZ2PrivateCIDR"
+                    ]
+                },
+                {
+                    "Label": {
+                        "default": "Bastion Configuration"
+                    },
+                    "Parameters": [
+                        "InstanceType",
+                        "BastionKey",
+                        "BastionPrivateIP"
+                    ]
+                }
+            ],
+            "ParameterLabels": {
+                "OmnicomNetwork": {
+                    "default": "Omnicom Network"
+                },
+                "AgencyName": {
+                    "default": "Full Agency Name"
+                },
+                "AgencyCode": {
+                    "default": "Agency Code for Naming and Tagging Conventions"
+                },
+                "vRACode": {
+                    "default": "Agency Code within vRA"
+                },
+                "OU": {
+                    "default": "Organizational Unit, Department, Teams"
+                },
+                "PCode": {
+                    "default": "Project Code"
+                },
+                "AvailabilityZones": {
+                    "default": "Select Availbility Zones"
+                },
+                "VPCCIDR": {
+                    "default": "VPC CIDR Block"
+                },
+                "GatewaySubnetAZ1PubicCIDR": {
+                    "default": "AZ1 Gateway Subnet CIDR"
+                },
+                "DMZ1SubnetAZ1PubicCIDR": {
+                    "default": "AZ1 DMZ1 Subnet CIDR"
+                },
+                "DMZ2SubnetAZ1PrivateCIDR": {
+                    "default": "AZ1 DMZ2 Subnet CIDR"
+                },
+                "InsideSubnetAZ1PrivateCIDR": {
+                    "default": "AZ1 Inside Subnet CIDR"
+                },
+                "MgmtSubnetAZ1PrivateCIDR": {
+                    "default": "AZ1 Management Subnet CIDR"
+                },
+                "GatewaySubnetAZ2PubicCIDR": {
+                    "default": "AZ2 Gateway Subnet CIDR"
+                },
+                "DMZ1SubnetAZ2PubicCIDR": {
+                    "default": "AZ2 DMZ1 Subnet CIDR"
+                },
+                "DMZ2SubnetAZ2PrivateCIDR": {
+                    "default": "AZ2 DMZ2 Subnet CIDR"
+                },
+                "InsideSubnetAZ2PrivateCIDR": {
+                    "default": "AZ2 Inside Subnet CIDR"
+                },
+                "MgmtSubnetAZ2PrivateCIDR": {
+                    "default": "AZ2 Management Subnet CIDR"
+                },
+                "InstanceType": {
+                    "default": "Size of Bastion Instance"
+                },
+                "BastionKey": {
+                    "default": "Select the Key Pair for SSH to Bastion Host"
+                },
+                "BastionPrivateIP": {
+                    "default": "Private IP Address for Bastion Host"
+                }
+            }
+        },
+        "AWS::CloudFormation::Designer": {
+            "694e7a74-a8a9-43e1-927f-b887bd9c2649": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": -360,
+                    "y": 1310
+                },
+                "z": 0,
+                "embeds": []
+            },
+            "3d994f41-e91e-4099-a967-74d9456166d7": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": -250,
+                    "y": -220
+                },
+                "z": 1,
+                "embeds": []
+            },
+            "8253debb-c607-4207-ae75-ded0987f7e2a": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": -660,
+                    "y": 540
+                },
+                "z": 1,
+                "embeds": []
+            },
+            "7c874832-de41-4a82-8000-7e91d4283906": {
+                "size": {
+                    "width": 1740,
+                    "height": 1410
+                },
+                "position": {
+                    "x": -490,
+                    "y": -130
+                },
+                "z": 1,
+                "embeds": [
+                    "cab9c8aa-e3cf-43a7-abda-d56c04e98606",
+                    "08cc6be0-ca50-4371-bda1-2ca74fb2d0e9",
+                    "5c2f80c8-fbd6-46e8-948e-6b5f78828a44",
+                    "f2dc5d6e-b5e9-4fde-a89c-b05631619584",
+                    "5a912301-fe36-4701-bb86-338f6c5f9b9b",
+                    "4864aa38-168c-4140-8d8d-3b5bdead4729",
+                    "5408bf75-cf38-432c-938e-58698daad0d2",
+                    "8eaf6b77-21a8-4741-92ea-4c166e74fadb",
+                    "85166139-0188-45d5-a2a6-84dc6a4d497d",
+                    "80bb4b15-80e1-4bf1-9362-8786e5f9d1c1",
+                    "541c342c-7056-457b-8d14-d18684e625c3",
+                    "b93b5407-73ce-4be7-baaf-e13242ab9c30",
+                    "e84e753f-b52d-4675-aab4-7d0a768100fc",
+                    "c473a0c9-fd42-45e8-827b-576eed291adc",
+                    "4ec4b3c9-d030-456a-9d35-c0ce06e9ffdf",
+                    "39a3d666-f1c6-4078-bc09-5d4e5169c51a",
+                    "c3b69598-f337-4008-b31e-d4f8a787171d",
+                    "03fb5c99-4dcf-499a-836e-4ee078c19b21"
+                ]
+            },
+            "cab9c8aa-e3cf-43a7-abda-d56c04e98606": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": -460,
+                    "y": 230
+                },
+                "z": 2,
+                "parent": "7c874832-de41-4a82-8000-7e91d4283906",
+                "embeds": []
+            },
+            "08cc6be0-ca50-4371-bda1-2ca74fb2d0e9": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 840,
+                    "y": 500
+                },
+                "z": 2,
+                "parent": "7c874832-de41-4a82-8000-7e91d4283906",
+                "embeds": [],
+                "isrelatedto": [
+                    "cab9c8aa-e3cf-43a7-abda-d56c04e98606"
+                ]
+            },
+            "5c2f80c8-fbd6-46e8-948e-6b5f78828a44": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 140,
+                    "y": 500
+                },
+                "z": 2,
+                "parent": "7c874832-de41-4a82-8000-7e91d4283906",
+                "embeds": [],
+                "isrelatedto": [
+                    "cab9c8aa-e3cf-43a7-abda-d56c04e98606",
+                    "08cc6be0-ca50-4371-bda1-2ca74fb2d0e9"
+                ]
+            },
+            "f2dc5d6e-b5e9-4fde-a89c-b05631619584": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 610,
+                    "y": 500
+                },
+                "z": 2,
+                "parent": "7c874832-de41-4a82-8000-7e91d4283906",
+                "embeds": [],
+                "isrelatedto": [
+                    "cab9c8aa-e3cf-43a7-abda-d56c04e98606",
+                    "08cc6be0-ca50-4371-bda1-2ca74fb2d0e9",
+                    "5c2f80c8-fbd6-46e8-948e-6b5f78828a44"
+                ]
+            },
+            "5a912301-fe36-4701-bb86-338f6c5f9b9b": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 370,
+                    "y": 500
+                },
+                "z": 2,
+                "parent": "7c874832-de41-4a82-8000-7e91d4283906",
+                "embeds": [],
+                "isrelatedto": [
+                    "cab9c8aa-e3cf-43a7-abda-d56c04e98606",
+                    "08cc6be0-ca50-4371-bda1-2ca74fb2d0e9",
+                    "5c2f80c8-fbd6-46e8-948e-6b5f78828a44"
+                ]
+            },
+            "4864aa38-168c-4140-8d8d-3b5bdead4729": {
+                "size": {
+                    "width": 460,
+                    "height": 170
+                },
+                "position": {
+                    "x": 310,
+                    "y": 740
+                },
+                "z": 2,
+                "parent": "7c874832-de41-4a82-8000-7e91d4283906",
+                "embeds": [
+                    "59a69407-9ba9-45cd-b9f7-17ab1826cb1d"
+                ]
+            },
+            "5408bf75-cf38-432c-938e-58698daad0d2": {
+                "size": {
+                    "width": 430,
+                    "height": 170
+                },
+                "position": {
+                    "x": 240,
+                    "y": 210
+                },
+                "z": 2,
+                "parent": "7c874832-de41-4a82-8000-7e91d4283906",
+                "embeds": [
+                    "90ca4297-32e0-4cd3-89d7-6c33f3728798"
+                ]
+            },
+            "8eaf6b77-21a8-4741-92ea-4c166e74fadb": {
+                "size": {
+                    "width": 280,
+                    "height": 150
+                },
+                "position": {
+                    "x": -410,
+                    "y": 570
+                },
+                "z": 2,
+                "parent": "7c874832-de41-4a82-8000-7e91d4283906",
+                "embeds": [
+                    "a79e71a5-d039-4345-a776-4438e0abd4fb"
+                ]
+            },
+            "85166139-0188-45d5-a2a6-84dc6a4d497d": {
+                "size": {
+                    "width": 150,
+                    "height": 190
+                },
+                "position": {
+                    "x": 810,
+                    "y": 1020
+                },
+                "z": 2,
+                "parent": "7c874832-de41-4a82-8000-7e91d4283906",
+                "embeds": []
+            },
+            "4c71ae26-3ec3-499d-acaf-326f1893ccf2": {
+                "source": {
+                    "id": "4864aa38-168c-4140-8d8d-3b5bdead4729"
+                },
+                "target": {
+                    "id": "85166139-0188-45d5-a2a6-84dc6a4d497d"
+                }
+            },
+            "80bb4b15-80e1-4bf1-9362-8786e5f9d1c1": {
+                "size": {
+                    "width": 140,
+                    "height": 190
+                },
+                "position": {
+                    "x": 580,
+                    "y": 1020
+                },
+                "z": 2,
+                "parent": "7c874832-de41-4a82-8000-7e91d4283906",
+                "embeds": []
+            },
+            "77341742-1da9-4855-86a0-31f2c3fa9eb0": {
+                "source": {
+                    "id": "4864aa38-168c-4140-8d8d-3b5bdead4729"
+                },
+                "target": {
+                    "id": "80bb4b15-80e1-4bf1-9362-8786e5f9d1c1"
+                }
+            },
+            "541c342c-7056-457b-8d14-d18684e625c3": {
+                "size": {
+                    "width": 150,
+                    "height": 200
+                },
+                "position": {
+                    "x": 310,
+                    "y": 1010
+                },
+                "z": 2,
+                "parent": "7c874832-de41-4a82-8000-7e91d4283906",
+                "embeds": []
+            },
+            "e8b3e9d3-ec35-49cc-9bb4-2320cf4b725f": {
+                "source": {
+                    "id": "4864aa38-168c-4140-8d8d-3b5bdead4729"
+                },
+                "target": {
+                    "id": "541c342c-7056-457b-8d14-d18684e625c3"
+                }
+            },
+            "b93b5407-73ce-4be7-baaf-e13242ab9c30": {
+                "size": {
+                    "width": 160,
+                    "height": 200
+                },
+                "position": {
+                    "x": 50,
+                    "y": 1010
+                },
+                "z": 2,
+                "parent": "7c874832-de41-4a82-8000-7e91d4283906",
+                "embeds": []
+            },
+            "b8a49f28-2f28-47fe-96d1-db1f8da96db1": {
+                "source": {
+                    "id": "8eaf6b77-21a8-4741-92ea-4c166e74fadb"
+                },
+                "target": {
+                    "id": "b93b5407-73ce-4be7-baaf-e13242ab9c30"
+                }
+            },
+            "e84e753f-b52d-4675-aab4-7d0a768100fc": {
+                "size": {
+                    "width": 330,
+                    "height": 210
+                },
+                "position": {
+                    "x": -390,
+                    "y": 1000
+                },
+                "z": 2,
+                "parent": "7c874832-de41-4a82-8000-7e91d4283906",
+                "embeds": [
+                    "6440c2cd-3e04-474c-9a2c-f717117c5def"
+                ]
+            },
+            "6440c2cd-3e04-474c-9a2c-f717117c5def": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": -360,
+                    "y": 1030
+                },
+                "z": 3,
+                "parent": "e84e753f-b52d-4675-aab4-7d0a768100fc",
+                "embeds": [],
+                "isrelatedto": [
+                    "694e7a74-a8a9-43e1-927f-b887bd9c2649"
+                ]
+            },
+            "59a69407-9ba9-45cd-b9f7-17ab1826cb1d": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 340,
+                    "y": 780
+                },
+                "z": 3,
+                "parent": "4864aa38-168c-4140-8d8d-3b5bdead4729",
+                "embeds": [],
+                "isrelatedto": [
+                    "6440c2cd-3e04-474c-9a2c-f717117c5def"
+                ]
+            },
+            "f76d6725-56e2-46ca-90c0-3d100d5b4e8a": {
+                "source": {
+                    "id": "8eaf6b77-21a8-4741-92ea-4c166e74fadb"
+                },
+                "target": {
+                    "id": "e84e753f-b52d-4675-aab4-7d0a768100fc"
+                }
+            },
+            "c473a0c9-fd42-45e8-827b-576eed291adc": {
+                "size": {
+                    "width": 140,
+                    "height": 190
+                },
+                "position": {
+                    "x": 780,
+                    "y": -40
+                },
+                "z": 2,
+                "parent": "7c874832-de41-4a82-8000-7e91d4283906",
+                "embeds": []
+            },
+            "69c04b9e-af2d-491c-a459-37af9cbc20bf": {
+                "source": {
+                    "id": "5408bf75-cf38-432c-938e-58698daad0d2"
+                },
+                "target": {
+                    "id": "c473a0c9-fd42-45e8-827b-576eed291adc"
+                }
+            },
+            "4ec4b3c9-d030-456a-9d35-c0ce06e9ffdf": {
+                "size": {
+                    "width": 150,
+                    "height": 190
+                },
+                "position": {
+                    "x": 530,
+                    "y": -40
+                },
+                "z": 2,
+                "parent": "7c874832-de41-4a82-8000-7e91d4283906",
+                "embeds": []
+            },
+            "e629676c-052c-4ad7-b35f-1eff4869444a": {
+                "source": {
+                    "id": "5408bf75-cf38-432c-938e-58698daad0d2"
+                },
+                "target": {
+                    "id": "4ec4b3c9-d030-456a-9d35-c0ce06e9ffdf"
+                }
+            },
+            "39a3d666-f1c6-4078-bc09-5d4e5169c51a": {
+                "size": {
+                    "width": 150,
+                    "height": 190
+                },
+                "position": {
+                    "x": 320,
+                    "y": -40
+                },
+                "z": 2,
+                "parent": "7c874832-de41-4a82-8000-7e91d4283906",
+                "embeds": []
+            },
+            "c4daa9db-7882-4217-92f7-688d2e0ca9ad": {
+                "source": {
+                    "id": "5408bf75-cf38-432c-938e-58698daad0d2"
+                },
+                "target": {
+                    "id": "39a3d666-f1c6-4078-bc09-5d4e5169c51a"
+                }
+            },
+            "c3b69598-f337-4008-b31e-d4f8a787171d": {
+                "size": {
+                    "width": 140,
+                    "height": 190
+                },
+                "position": {
+                    "x": 40,
+                    "y": -40
+                },
+                "z": 2,
+                "parent": "7c874832-de41-4a82-8000-7e91d4283906",
+                "embeds": []
+            },
+            "49f529b1-e6e7-4c98-9c69-20bcdc7828c9": {
+                "source": {
+                    "id": "8eaf6b77-21a8-4741-92ea-4c166e74fadb"
+                },
+                "target": {
+                    "id": "c3b69598-f337-4008-b31e-d4f8a787171d"
+                }
+            },
+            "03fb5c99-4dcf-499a-836e-4ee078c19b21": {
+                "size": {
+                    "width": 320,
+                    "height": 190
+                },
+                "position": {
+                    "x": -400,
+                    "y": -40
+                },
+                "z": 2,
+                "parent": "7c874832-de41-4a82-8000-7e91d4283906",
+                "embeds": [
+                    "c61f79e6-f978-4d1a-aafb-3ac55237d652",
+                    "c7403d9b-8eee-46ef-b6b9-29d77ef1e66d"
+                ]
+            },
+            "c61f79e6-f978-4d1a-aafb-3ac55237d652": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": -370,
+                    "y": 20
+                },
+                "z": 3,
+                "parent": "03fb5c99-4dcf-499a-836e-4ee078c19b21",
+                "embeds": [],
+                "ismemberof": [
+                    "cab9c8aa-e3cf-43a7-abda-d56c04e98606"
+                ]
+            },
+            "c7403d9b-8eee-46ef-b6b9-29d77ef1e66d": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": -250,
+                    "y": 20
+                },
+                "z": 3,
+                "parent": "03fb5c99-4dcf-499a-836e-4ee078c19b21",
+                "embeds": [],
+                "isrelatedto": [
+                    "3d994f41-e91e-4099-a967-74d9456166d7"
+                ]
+            },
+            "90ca4297-32e0-4cd3-89d7-6c33f3728798": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 270,
+                    "y": 270
+                },
+                "z": 3,
+                "parent": "5408bf75-cf38-432c-938e-58698daad0d2",
+                "embeds": [],
+                "isrelatedto": [
+                    "c7403d9b-8eee-46ef-b6b9-29d77ef1e66d"
+                ]
+            },
+            "e0e8b18f-c230-4fbd-b344-67e74b28adcb": {
+                "source": {
+                    "id": "8eaf6b77-21a8-4741-92ea-4c166e74fadb"
+                },
+                "target": {
+                    "id": "03fb5c99-4dcf-499a-836e-4ee078c19b21"
+                }
+            },
+            "d701eefd-6b8a-4798-8edf-e0e3d5142a46": {
+                "source": {
+                    "id": "8253debb-c607-4207-ae75-ded0987f7e2a"
+                },
+                "target": {
+                    "id": "7c874832-de41-4a82-8000-7e91d4283906"
+                }
+            },
+            "a79e71a5-d039-4345-a776-4438e0abd4fb": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": -380,
+                    "y": 630
+                },
+                "z": 3,
+                "parent": "8eaf6b77-21a8-4741-92ea-4c166e74fadb",
+                "embeds": [],
+                "references": [
+                    "8253debb-c607-4207-ae75-ded0987f7e2a"
+                ],
+                "dependson": [
+                    "d701eefd-6b8a-4798-8edf-e0e3d5142a46"
+                ]
+            }
+        }
+    },
+    "Parameters": {
+        "OmnicomNetwork": {
+            "Type": "String",
+            "Default": "DAS",
+            "AllowedValues": [
+                "DAS",
+                "TBWA",
+                "BBDO",
+                "DDB",
+                "OMG"
+            ],
+            "Description": "Name of the Omnicom Network for this project"
+        },
+        "AgencyName": {
+            "Type": "String",
+            "Default": "Targetbase",
+            "AllowedValues": [
+                "Targetbase",
+                "RAPP",
+                "Hyphen Group",
+                "Ketchum",
+                "Fleishman Hillard"
+            ],
+            "Description": "Name of the agency for this project"
+        },
+        "AgencyCode": {
+            "Type": "String",
+            "Default": "tgb",
+            "AllowedValues": [
+                "tgb",
+                "rap",
+                "hcg",
+                "ktm",
+                "fmh"
+            ],
+            "Description": "Agency Code for naming and tagging of resources"
+        },
+        "vRACode": {
+            "Type": "Number",
+            "Default": "347",
+            "Description": "Enter the agency code from vRA portal, 3 Digits"
+        },
+        "OU": {
+            "Type": "String",
+            "Default": "dev",
+            "Description": "Enter the Organizational Unit for this project. e.g. dev, test, prod, etc., 3 Letters Max."
+        },
+        "PCode": {
+            "Type": "String",
+            "Default": "app1",
+            "Description": "Max 4 characters, letters and numbers"
+        },
+        "AvailabilityZones": {
+            "Description": "List of Availability Zones to use for the subnets in the VPC. Note: The logical order is preserved and only 2 AZs are used for this deployment.",
+            "Type": "List<AWS::EC2::AvailabilityZone::Name>"
+        },
+        "VPCCIDR": {
+            "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
+            "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/23",
+            "Default": "100.110.10.0/23",
+            "Description": "CIDR Block for the VPC",
+            "Type": "String"
+        },
+        "GatewaySubnetAZ1PubicCIDR": {
+            "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
+            "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/28",
+            "Default": "100.110.10.208/28",
+            "Description": "CIDR block for public Gateway in AZ1",
+            "Type": "String"
+        },
+        "DMZ1SubnetAZ1PubicCIDR": {
+            "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
+            "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/26",
+            "Default": "100.110.10.0/26",
+            "Description": "CIDR block for public DMZ1 in AZ1",
+            "Type": "String"
+        },
+        "DMZ2SubnetAZ1PrivateCIDR": {
+            "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
+            "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/26",
+            "Default": "100.110.10.64/26",
+            "Description": "CIDR block for private DMZ2 in AZ1",
+            "Type": "String"
+        },
+        "InsideSubnetAZ1PrivateCIDR": {
+            "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
+            "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/26",
+            "Default": "100.110.10.128/26",
+            "Description": "CIDR block for private Inside in AZ1",
+            "Type": "String"
+        },
+        "MgmtSubnetAZ1PrivateCIDR": {
+            "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
+            "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/28",
+            "Default": "100.110.10.192/28",
+            "Description": "CIDR block for private Mgmt in AZ1",
+            "Type": "String"
+        },
+        "GatewaySubnetAZ2PubicCIDR": {
+            "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
+            "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/28",
+            "Default": "100.110.11.208/28",
+            "Description": "CIDR block for public Gateway in AZ2",
+            "Type": "String"
+        },
+        "DMZ1SubnetAZ2PubicCIDR": {
+            "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
+            "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/26",
+            "Default": "100.110.11.0/26",
+            "Description": "CIDR block for public DMZ1 in AZ2",
+            "Type": "String"
+        },
+        "DMZ2SubnetAZ2PrivateCIDR": {
+            "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
+            "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/26",
+            "Default": "100.110.11.64/26",
+            "Description": "CIDR block for private DMZ2 in AZ2",
+            "Type": "String"
+        },
+        "InsideSubnetAZ2PrivateCIDR": {
+            "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
+            "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/26",
+            "Default": "100.110.11.128/26",
+            "Description": "CIDR block for private Inside in AZ2",
+            "Type": "String"
+        },
+        "MgmtSubnetAZ2PrivateCIDR": {
+            "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
+            "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/28",
+            "Default": "100.110.11.192/28",
+            "Description": "CIDR block for private Mgmt in AZ2",
+            "Type": "String"
+        },
+        "InstanceType": {
+            "Description": "Bastion Host Instance Type",
+            "Type": "String",
+            "Default": "t2.micro",
+            "AllowedValues": [
+                "t2.nano",
+                "t2.micro",
+                "t2.small",
+                "t2.medium",
+                "t2.large",
+                "m1.large",
+                "m1.xlarge",
+                "m2.xlarge"
+            ],
+            "ConstraintDescription": "must be a valid EC2 instance type."
+        },
+        "BastionKey": {
+            "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instance",
+            "Type": "AWS::EC2::KeyPair::KeyName",
+            "ConstraintDescription": "Select Only One Key"
+        },
+        "BastionPrivateIP": {
+            "Description": "Private IP Address for the Bastion Host, Range: 100.110.10.210-220",
+            "Type": "String",
+            "Default": "100.110.10.215",
+            "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
+        }
+    },
+    "Mappings": {
+        "RegionMap": {
+            "us-east-1": {
+                "AMI": "ami-c58c1dd3"
+            },
+            "us-east-2": {
+                "AMI": "ami-4191b524"
+            },
+            "us-west-1": {
+                "AMI": "ami-7a85a01a"
+            },
+            "us-west-2": {
+                "AMI": "ami-4836a428"
+            },
+            "ca-central-1": {
+                "AMI": "ami-0bd66a6f"
+            },
+            "eu-west-1": {
+                "AMI": "ami-01ccc867"
+            },
+            "eu-central-1": {
+                "AMI": "ami-b968bad6"
+            },
+            "eu-west-2": {
+                "AMI": "ami-b6daced2"
+            },
+            "ap-northeast-1": {
+                "AMI": "ami-923d12f5"
+            },
+            "ap-northeast-2": {
+                "AMI": "ami-9d15c7f3"
+            },
+            "ap-southeast-1": {
+                "AMI": "ami-fc5ae39f"
+            },
+            "ap-southeast-2": {
+                "AMI": "ami-162c2575"
+            },
+            "ap-south-1": {
+                "AMI": "ami-52c7b43d"
+            },
+            "sa-east-1": {
+                "AMI": "ami-37cfad5b"
+            }
+        }
+    },
+    "Conditions": {
+        "targetbasecondition": {
+            "Fn::Equals": [
+                {
+                    "Ref": "AgencyName"
+                },
+                "Targetbase"
+            ]
+        },
+        "rappcondition": {
+            "Fn::Equals": [
+                {
+                    "Ref": "AgencyName"
+                },
+                "RAPP"
+            ]
+        },
+        "hyphencondition": {
+            "Fn::Equals": [
+                {
+                    "Ref": "AgencyName"
+                },
+                "Hyphen Group"
+            ]
+        },
+        "ketchumcondition": {
+            "Fn::Equals": [
+                {
+                    "Ref": "AgencyName"
+                },
+                "Ketchum"
+            ]
+        },
+        "fleishmancondition": {
+            "Fn::Equals": [
+                {
+                    "Ref": "AgencyName"
+                },
+                "Fleishman Hillard"
+            ]
+        }
+    },
+    "Outputs": {
+        "AgencyCode": {
+            "Description": "Code of the Agency based on Agency Name Value",
+            "Value": "tgb",
+            "Condition": "targetbasecondition"
+        }
+    },
+    "Resources": {
+        "myVPC": {
+            "Type": "AWS::EC2::VPC",
+            "Properties": {
+                "CidrBlock": {
+                    "Ref": "VPCCIDR"
+                },
+                "EnableDnsSupport": "false",
+                "EnableDnsHostnames": "false",
+                "InstanceTenancy": "default",
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                "-",
+                                [
+                                    {
+                                        "Ref": "OmnicomNetwork"
+                                    },
+                                    {
+                                        "Ref": "vRACode"
+                                    },
+                                    {
+                                        "Ref": "AgencyCode"
+                                    },
+                                    {
+                                        "Ref": "OU"
+                                    },
+                                    {
+                                        "Ref": "PCode"
+                                    },
+                                    "myVPC"
+                                ]
+                            ]
+                        }
+                    }
+                ]
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "7c874832-de41-4a82-8000-7e91d4283906"
+                }
+            }
+        },
+        "InternetGateway": {
+            "Type": "AWS::EC2::InternetGateway",
+            "Properties": {
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                "-",
+                                [
+                                    {
+                                        "Ref": "OmnicomNetwork"
+                                    },
+                                    {
+                                        "Ref": "vRACode"
+                                    },
+                                    {
+                                        "Ref": "AgencyCode"
+                                    },
+                                    {
+                                        "Ref": "OU"
+                                    },
+                                    {
+                                        "Ref": "PCode"
+                                    },
+                                    "igw"
+                                ]
+                            ]
+                        }
+                    }
+                ]
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "8253debb-c607-4207-ae75-ded0987f7e2a"
+                }
+            }
+        },
+        "AttachGateway": {
+            "Type": "AWS::EC2::VPCGatewayAttachment",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "myVPC"
+                },
+                "InternetGatewayId": {
+                    "Ref": "InternetGateway"
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "d701eefd-6b8a-4798-8edf-e0e3d5142a46"
+                }
+            }
+        },
+        "GatewaySubnetAZ1Pubic": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "myVPC"
+                },
+                "CidrBlock": {
+                    "Ref": "GatewaySubnetAZ1PubicCIDR"
+                },
+                "MapPublicIpOnLaunch": "true",
+                "AvailabilityZone": {
+                    "Fn::Select": [
+                        "0",
+                        {
+                            "Fn::GetAZs": ""
+                        }
+                    ]
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                "-",
+                                [
+                                    {
+                                        "Ref": "OmnicomNetwork"
+                                    },
+                                    {
+                                        "Ref": "vRACode"
+                                    },
+                                    {
+                                        "Ref": "AgencyCode"
+                                    },
+                                    {
+                                        "Ref": "OU"
+                                    },
+                                    {
+                                        "Ref": "PCode"
+                                    },
+                                    "gatewayaz1"
+                                ]
+                            ]
+                        }
+                    }
+                ]
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "03fb5c99-4dcf-499a-836e-4ee078c19b21"
+                }
+            }
+        },
+        "DMZ1SubnetAZ1Pubic": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "myVPC"
+                },
+                "CidrBlock": {
+                    "Ref": "DMZ1SubnetAZ1PubicCIDR"
+                },
+                "MapPublicIpOnLaunch": "true",
+                "AvailabilityZone": {
+                    "Fn::Select": [
+                        "0",
+                        {
+                            "Fn::GetAZs": ""
+                        }
+                    ]
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                "-",
+                                [
+                                    {
+                                        "Ref": "OmnicomNetwork"
+                                    },
+                                    {
+                                        "Ref": "vRACode"
+                                    },
+                                    {
+                                        "Ref": "AgencyCode"
+                                    },
+                                    {
+                                        "Ref": "OU"
+                                    },
+                                    {
+                                        "Ref": "PCode"
+                                    },
+                                    "dmz1az1"
+                                ]
+                            ]
+                        }
+                    }
+                ]
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "c3b69598-f337-4008-b31e-d4f8a787171d"
+                }
+            }
+        },
+        "DMZ2SubnetAZ1Private": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "myVPC"
+                },
+                "CidrBlock": {
+                    "Ref": "DMZ2SubnetAZ1PrivateCIDR"
+                },
+                "MapPublicIpOnLaunch": "false",
+                "AvailabilityZone": {
+                    "Fn::Select": [
+                        "0",
+                        {
+                            "Fn::GetAZs": ""
+                        }
+                    ]
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                "-",
+                                [
+                                    {
+                                        "Ref": "OmnicomNetwork"
+                                    },
+                                    {
+                                        "Ref": "vRACode"
+                                    },
+                                    {
+                                        "Ref": "AgencyCode"
+                                    },
+                                    {
+                                        "Ref": "OU"
+                                    },
+                                    {
+                                        "Ref": "PCode"
+                                    },
+                                    "dmz2az1"
+                                ]
+                            ]
+                        }
+                    }
+                ]
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "39a3d666-f1c6-4078-bc09-5d4e5169c51a"
+                }
+            }
+        },
+        "InsideSubnetAZ1Private": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "myVPC"
+                },
+                "CidrBlock": {
+                    "Ref": "InsideSubnetAZ1PrivateCIDR"
+                },
+                "MapPublicIpOnLaunch": "false",
+                "AvailabilityZone": {
+                    "Fn::Select": [
+                        "0",
+                        {
+                            "Fn::GetAZs": ""
+                        }
+                    ]
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                "-",
+                                [
+                                    {
+                                        "Ref": "OmnicomNetwork"
+                                    },
+                                    {
+                                        "Ref": "vRACode"
+                                    },
+                                    {
+                                        "Ref": "AgencyCode"
+                                    },
+                                    {
+                                        "Ref": "OU"
+                                    },
+                                    {
+                                        "Ref": "PCode"
+                                    },
+                                    "insideaz1"
+                                ]
+                            ]
+                        }
+                    }
+                ]
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "4ec4b3c9-d030-456a-9d35-c0ce06e9ffdf"
+                }
+            }
+        },
+        "MgmtSubnetAZ1Private": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "myVPC"
+                },
+                "CidrBlock": {
+                    "Ref": "MgmtSubnetAZ1PrivateCIDR"
+                },
+                "MapPublicIpOnLaunch": "false",
+                "AvailabilityZone": {
+                    "Fn::Select": [
+                        "0",
+                        {
+                            "Fn::GetAZs": ""
+                        }
+                    ]
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                "-",
+                                [
+                                    {
+                                        "Ref": "OmnicomNetwork"
+                                    },
+                                    {
+                                        "Ref": "vRACode"
+                                    },
+                                    {
+                                        "Ref": "AgencyCode"
+                                    },
+                                    {
+                                        "Ref": "OU"
+                                    },
+                                    {
+                                        "Ref": "PCode"
+                                    },
+                                    "mgmtaz1"
+                                ]
+                            ]
+                        }
+                    }
+                ]
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "c473a0c9-fd42-45e8-827b-576eed291adc"
+                }
+            }
+        },
+        "GatewaySubnetAZ2Pubic": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "myVPC"
+                },
+                "CidrBlock": {
+                    "Ref": "GatewaySubnetAZ2PubicCIDR"
+                },
+                "MapPublicIpOnLaunch": "true",
+                "AvailabilityZone": {
+                    "Fn::Select": [
+                        "1",
+                        {
+                            "Fn::GetAZs": ""
+                        }
+                    ]
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                "-",
+                                [
+                                    {
+                                        "Ref": "OmnicomNetwork"
+                                    },
+                                    {
+                                        "Ref": "vRACode"
+                                    },
+                                    {
+                                        "Ref": "AgencyCode"
+                                    },
+                                    {
+                                        "Ref": "OU"
+                                    },
+                                    {
+                                        "Ref": "PCode"
+                                    },
+                                    "gatewayaz2"
+                                ]
+                            ]
+                        }
+                    }
+                ]
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "e84e753f-b52d-4675-aab4-7d0a768100fc"
+                }
+            }
+        },
+        "DMZ1SubnetAZ2Pubic": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "myVPC"
+                },
+                "CidrBlock": {
+                    "Ref": "DMZ1SubnetAZ2PubicCIDR"
+                },
+                "MapPublicIpOnLaunch": "true",
+                "AvailabilityZone": {
+                    "Fn::Select": [
+                        "1",
+                        {
+                            "Fn::GetAZs": ""
+                        }
+                    ]
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                "-",
+                                [
+                                    {
+                                        "Ref": "OmnicomNetwork"
+                                    },
+                                    {
+                                        "Ref": "vRACode"
+                                    },
+                                    {
+                                        "Ref": "AgencyCode"
+                                    },
+                                    {
+                                        "Ref": "OU"
+                                    },
+                                    {
+                                        "Ref": "PCode"
+                                    },
+                                    "dmz1az2"
+                                ]
+                            ]
+                        }
+                    }
+                ]
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "b93b5407-73ce-4be7-baaf-e13242ab9c30"
+                }
+            }
+        },
+        "DMZ2SubnetAZ2Private": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "myVPC"
+                },
+                "CidrBlock": {
+                    "Ref": "DMZ2SubnetAZ2PrivateCIDR"
+                },
+                "MapPublicIpOnLaunch": "false",
+                "AvailabilityZone": {
+                    "Fn::Select": [
+                        "1",
+                        {
+                            "Fn::GetAZs": ""
+                        }
+                    ]
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                "-",
+                                [
+                                    {
+                                        "Ref": "OmnicomNetwork"
+                                    },
+                                    {
+                                        "Ref": "vRACode"
+                                    },
+                                    {
+                                        "Ref": "AgencyCode"
+                                    },
+                                    {
+                                        "Ref": "OU"
+                                    },
+                                    {
+                                        "Ref": "PCode"
+                                    },
+                                    "dmz2az2"
+                                ]
+                            ]
+                        }
+                    }
+                ]
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "541c342c-7056-457b-8d14-d18684e625c3"
+                }
+            }
+        },
+        "InsideSubnetAZ2Private": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "myVPC"
+                },
+                "CidrBlock": {
+                    "Ref": "InsideSubnetAZ2PrivateCIDR"
+                },
+                "MapPublicIpOnLaunch": "false",
+                "AvailabilityZone": {
+                    "Fn::Select": [
+                        "1",
+                        {
+                            "Fn::GetAZs": ""
+                        }
+                    ]
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                "-",
+                                [
+                                    {
+                                        "Ref": "OmnicomNetwork"
+                                    },
+                                    {
+                                        "Ref": "vRACode"
+                                    },
+                                    {
+                                        "Ref": "AgencyCode"
+                                    },
+                                    {
+                                        "Ref": "OU"
+                                    },
+                                    {
+                                        "Ref": "PCode"
+                                    },
+                                    "insideaz2"
+                                ]
+                            ]
+                        }
+                    }
+                ]
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "80bb4b15-80e1-4bf1-9362-8786e5f9d1c1"
+                }
+            }
+        },
+        "MgmtSubnetAZ2Private": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "myVPC"
+                },
+                "CidrBlock": {
+                    "Ref": "MgmtSubnetAZ2PrivateCIDR"
+                },
+                "MapPublicIpOnLaunch": "false",
+                "AvailabilityZone": {
+                    "Fn::Select": [
+                        "1",
+                        {
+                            "Fn::GetAZs": ""
+                        }
+                    ]
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                "-",
+                                [
+                                    {
+                                        "Ref": "OmnicomNetwork"
+                                    },
+                                    {
+                                        "Ref": "vRACode"
+                                    },
+                                    {
+                                        "Ref": "AgencyCode"
+                                    },
+                                    {
+                                        "Ref": "OU"
+                                    },
+                                    {
+                                        "Ref": "PCode"
+                                    },
+                                    "mgmtaz2"
+                                ]
+                            ]
+                        }
+                    }
+                ]
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "85166139-0188-45d5-a2a6-84dc6a4d497d"
+                }
+            }
+        },
+        "PublicRT": {
+            "Type": "AWS::EC2::RouteTable",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "myVPC"
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                "-",
+                                [
+                                    {
+                                        "Ref": "OmnicomNetwork"
+                                    },
+                                    {
+                                        "Ref": "vRACode"
+                                    },
+                                    {
+                                        "Ref": "AgencyCode"
+                                    },
+                                    {
+                                        "Ref": "OU"
+                                    },
+                                    {
+                                        "Ref": "PCode"
+                                    },
+                                    "publicRT"
+                                ]
+                            ]
+                        }
+                    }
+                ]
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "8eaf6b77-21a8-4741-92ea-4c166e74fadb"
+                }
+            }
+        },
+        "RouteTablePublic": {
+            "Type": "AWS::EC2::Route",
+            "DependsOn": "AttachGateway",
+            "Properties": {
+                "RouteTableId": {
+                    "Ref": "PublicRT"
+                },
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "GatewayId": {
+                    "Ref": "InternetGateway"
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "a79e71a5-d039-4345-a776-4438e0abd4fb"
+                }
+            }
+        },
+        "GatewaySubnetAZ1PubicRT": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "GatewaySubnetAZ1Pubic"
+                },
+                "RouteTableId": {
+                    "Ref": "PublicRT"
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "e0e8b18f-c230-4fbd-b344-67e74b28adcb"
+                }
+            }
+        },
+        "DMZ1SubnetAZ1PubicRT": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "DMZ1SubnetAZ1Pubic"
+                },
+                "RouteTableId": {
+                    "Ref": "PublicRT"
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "49f529b1-e6e7-4c98-9c69-20bcdc7828c9"
+                }
+            }
+        },
+        "GatewaySubnetAZ2PubicRT": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "GatewaySubnetAZ2Pubic"
+                },
+                "RouteTableId": {
+                    "Ref": "PublicRT"
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "f76d6725-56e2-46ca-90c0-3d100d5b4e8a"
+                }
+            }
+        },
+        "DMZ1SubnetAZ2PubicRT": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "DMZ1SubnetAZ2Pubic"
+                },
+                "RouteTableId": {
+                    "Ref": "PublicRT"
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "b8a49f28-2f28-47fe-96d1-db1f8da96db1"
+                }
+            }
+        },
+        "NATGatewayAZ1": {
+            "Type": "AWS::EC2::NatGateway",
+            "Properties": {
+                "AllocationId": {
+                    "Fn::GetAtt": [
+                        "NATEIPAZ1",
+                        "AllocationId"
+                    ]
+                },
+                "SubnetId": {
+                    "Ref": "GatewaySubnetAZ1Pubic"
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "c7403d9b-8eee-46ef-b6b9-29d77ef1e66d"
+                }
+            }
+        },
+        "NATEIPAZ1": {
+            "Type": "AWS::EC2::EIP",
+            "Properties": {
+                "Domain": "vpc"
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "3d994f41-e91e-4099-a967-74d9456166d7"
+                }
+            }
+        },
+        "NATGatewayAZ2": {
+            "Type": "AWS::EC2::NatGateway",
+            "Properties": {
+                "AllocationId": {
+                    "Fn::GetAtt": [
+                        "NATEIPAZ2",
+                        "AllocationId"
+                    ]
+                },
+                "SubnetId": {
+                    "Ref": "GatewaySubnetAZ2Pubic"
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "6440c2cd-3e04-474c-9a2c-f717117c5def"
+                }
+            }
+        },
+        "NATEIPAZ2": {
+            "Type": "AWS::EC2::EIP",
+            "Properties": {
+                "Domain": "vpc"
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "694e7a74-a8a9-43e1-927f-b887bd9c2649"
+                }
+            }
+        },
+        "PrivateAZ1RouteTable": {
+            "Type": "AWS::EC2::RouteTable",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "myVPC"
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                "-",
+                                [
+                                    {
+                                        "Ref": "OmnicomNetwork"
+                                    },
+                                    {
+                                        "Ref": "vRACode"
+                                    },
+                                    {
+                                        "Ref": "AgencyCode"
+                                    },
+                                    {
+                                        "Ref": "OU"
+                                    },
+                                    {
+                                        "Ref": "PCode"
+                                    },
+                                    "privateRTaz1"
+                                ]
+                            ]
+                        }
+                    }
+                ]
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "5408bf75-cf38-432c-938e-58698daad0d2"
+                }
+            }
+        },
+        "PrivateAZ1Route": {
+            "Type": "AWS::EC2::Route",
+            "Properties": {
+                "RouteTableId": {
+                    "Ref": "PrivateAZ1RouteTable"
+                },
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "NatGatewayId": {
+                    "Ref": "NATGatewayAZ1"
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "90ca4297-32e0-4cd3-89d7-6c33f3728798"
+                }
+            }
+        },
+        "DMZ2SubnetAZ1PrivateRT": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "DMZ2SubnetAZ1Private"
+                },
+                "RouteTableId": {
+                    "Ref": "PrivateAZ1RouteTable"
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "c4daa9db-7882-4217-92f7-688d2e0ca9ad"
+                }
+            }
+        },
+        "InsideSubnetAZ1PrivateRT": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "InsideSubnetAZ1Private"
+                },
+                "RouteTableId": {
+                    "Ref": "PrivateAZ1RouteTable"
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "e629676c-052c-4ad7-b35f-1eff4869444a"
+                }
+            }
+        },
+        "MgmtSubnetAZ1PrivateRT": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "MgmtSubnetAZ1Private"
+                },
+                "RouteTableId": {
+                    "Ref": "PrivateAZ1RouteTable"
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "69c04b9e-af2d-491c-a459-37af9cbc20bf"
+                }
+            }
+        },
+        "PrivateAZ2RouteTable": {
+            "Type": "AWS::EC2::RouteTable",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "myVPC"
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                "-",
+                                [
+                                    {
+                                        "Ref": "OmnicomNetwork"
+                                    },
+                                    {
+                                        "Ref": "vRACode"
+                                    },
+                                    {
+                                        "Ref": "AgencyCode"
+                                    },
+                                    {
+                                        "Ref": "OU"
+                                    },
+                                    {
+                                        "Ref": "PCode"
+                                    },
+                                    "privateRTaz2"
+                                ]
+                            ]
+                        }
+                    }
+                ]
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "4864aa38-168c-4140-8d8d-3b5bdead4729"
+                }
+            }
+        },
+        "PrivateAZ2Route": {
+            "Type": "AWS::EC2::Route",
+            "Properties": {
+                "RouteTableId": {
+                    "Ref": "PrivateAZ2RouteTable"
+                },
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "NatGatewayId": {
+                    "Ref": "NATGatewayAZ2"
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "59a69407-9ba9-45cd-b9f7-17ab1826cb1d"
+                }
+            }
+        },
+        "DMZ2SubnetAZ2PrivateRT": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "DMZ2SubnetAZ2Private"
+                },
+                "RouteTableId": {
+                    "Ref": "PrivateAZ2RouteTable"
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "e8b3e9d3-ec35-49cc-9bb4-2320cf4b725f"
+                }
+            }
+        },
+        "InsideSubnetAZ2PrivateRT": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "InsideSubnetAZ2Private"
+                },
+                "RouteTableId": {
+                    "Ref": "PrivateAZ2RouteTable"
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "77341742-1da9-4855-86a0-31f2c3fa9eb0"
+                }
+            }
+        },
+        "MgmtSubnetAZ2PrivateRT": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "MgmtSubnetAZ2Private"
+                },
+                "RouteTableId": {
+                    "Ref": "PrivateAZ2RouteTable"
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "4c71ae26-3ec3-499d-acaf-326f1893ccf2"
+                }
+            }
+        },
+        "bastionsg": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Allow SSH from MPLS Network",
+                "VpcId": {
+                    "Ref": "myVPC"
+                },
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "CidrIp": "12.39.106.1/32"
+                    }
+                ],
+                "SecurityGroupEgress": [
+                    {
+                        "IpProtocol": "-1",
+                        "FromPort": "0",
+                        "ToPort": "65535",
+                        "CidrIp": "0.0.0.0/0"
+                    }
+                ],
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                "-",
+                                [
+                                    {
+                                        "Ref": "OmnicomNetwork"
+                                    },
+                                    {
+                                        "Ref": "vRACode"
+                                    },
+                                    {
+                                        "Ref": "AgencyCode"
+                                    },
+                                    {
+                                        "Ref": "OU"
+                                    },
+                                    {
+                                        "Ref": "PCode"
+                                    },
+                                    "bastionsg"
+                                ]
+                            ]
+                        }
+                    }
+                ]
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "cab9c8aa-e3cf-43a7-abda-d56c04e98606"
+                }
+            }
+        },
+        "mgmtsg": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Allow SSH from Bastion",
+                "VpcId": {
+                    "Ref": "myVPC"
+                },
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "SourceSecurityGroupId": {
+                            "Ref": "bastionsg"
+                        }
+                    }
+                ],
+                "SecurityGroupEgress": [
+                    {
+                        "IpProtocol": "-1",
+                        "FromPort": "0",
+                        "ToPort": "65535",
+                        "CidrIp": "0.0.0.0/0"
+                    }
+                ],
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                "-",
+                                [
+                                    {
+                                        "Ref": "OmnicomNetwork"
+                                    },
+                                    {
+                                        "Ref": "vRACode"
+                                    },
+                                    {
+                                        "Ref": "AgencyCode"
+                                    },
+                                    {
+                                        "Ref": "OU"
+                                    },
+                                    {
+                                        "Ref": "PCode"
+                                    },
+                                    "mgmtsg"
+                                ]
+                            ]
+                        }
+                    }
+                ]
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "08cc6be0-ca50-4371-bda1-2ca74fb2d0e9"
+                }
+            }
+        },
+        "dmz1sg": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Allow SSH from Bastion, HTTP & HTTPS Access",
+                "VpcId": {
+                    "Ref": "myVPC"
+                },
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "SourceSecurityGroupId": {
+                            "Ref": "bastionsg"
+                        }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "SourceSecurityGroupId": {
+                            "Ref": "mgmtsg"
+                        }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "80",
+                        "ToPort": "80",
+                        "CidrIp": "0.0.0.0/0"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "443",
+                        "ToPort": "443",
+                        "CidrIp": "0.0.0.0/0"
+                    }
+                ],
+                "SecurityGroupEgress": [
+                    {
+                        "IpProtocol": "-1",
+                        "FromPort": "0",
+                        "ToPort": "65535",
+                        "CidrIp": "0.0.0.0/0"
+                    }
+                ],
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                "-",
+                                [
+                                    {
+                                        "Ref": "OmnicomNetwork"
+                                    },
+                                    {
+                                        "Ref": "vRACode"
+                                    },
+                                    {
+                                        "Ref": "AgencyCode"
+                                    },
+                                    {
+                                        "Ref": "OU"
+                                    },
+                                    {
+                                        "Ref": "PCode"
+                                    },
+                                    "dmz1sg"
+                                ]
+                            ]
+                        }
+                    }
+                ]
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "5c2f80c8-fbd6-46e8-948e-6b5f78828a44"
+                }
+            }
+        },
+        "dmz2sg": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Allow SSH from Bastion, SQL deom DMZ1",
+                "VpcId": {
+                    "Ref": "myVPC"
+                },
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "SourceSecurityGroupId": {
+                            "Ref": "bastionsg"
+                        }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "SourceSecurityGroupId": {
+                            "Ref": "mgmtsg"
+                        }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "1433",
+                        "ToPort": "1433",
+                        "SourceSecurityGroupId": {
+                            "Ref": "dmz1sg"
+                        }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "3306",
+                        "ToPort": "3306",
+                        "SourceSecurityGroupId": {
+                            "Ref": "dmz1sg"
+                        }
+                    }
+                ],
+                "SecurityGroupEgress": [
+                    {
+                        "IpProtocol": "-1",
+                        "FromPort": "0",
+                        "ToPort": "65535",
+                        "CidrIp": "0.0.0.0/0"
+                    }
+                ],
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                "-",
+                                [
+                                    {
+                                        "Ref": "OmnicomNetwork"
+                                    },
+                                    {
+                                        "Ref": "vRACode"
+                                    },
+                                    {
+                                        "Ref": "AgencyCode"
+                                    },
+                                    {
+                                        "Ref": "OU"
+                                    },
+                                    {
+                                        "Ref": "PCode"
+                                    },
+                                    "dmz2sg"
+                                ]
+                            ]
+                        }
+                    }
+                ]
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "5a912301-fe36-4701-bb86-338f6c5f9b9b"
+                }
+            }
+        },
+        "insidesg": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Allow SSH from Bastion",
+                "VpcId": {
+                    "Ref": "myVPC"
+                },
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "SourceSecurityGroupId": {
+                            "Ref": "bastionsg"
+                        }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "SourceSecurityGroupId": {
+                            "Ref": "mgmtsg"
+                        }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "1433",
+                        "ToPort": "1433",
+                        "SourceSecurityGroupId": {
+                            "Ref": "dmz1sg"
+                        }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "3306",
+                        "ToPort": "3306",
+                        "SourceSecurityGroupId": {
+                            "Ref": "dmz1sg"
+                        }
+                    }
+                ],
+                "SecurityGroupEgress": [
+                    {
+                        "IpProtocol": "-1",
+                        "FromPort": "0",
+                        "ToPort": "65535",
+                        "CidrIp": "0.0.0.0/0"
+                    }
+                ],
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                "-",
+                                [
+                                    {
+                                        "Ref": "OmnicomNetwork"
+                                    },
+                                    {
+                                        "Ref": "vRACode"
+                                    },
+                                    {
+                                        "Ref": "AgencyCode"
+                                    },
+                                    {
+                                        "Ref": "OU"
+                                    },
+                                    {
+                                        "Ref": "PCode"
+                                    },
+                                    "dmz2sg"
+                                ]
+                            ]
+                        }
+                    }
+                ]
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "f2dc5d6e-b5e9-4fde-a89c-b05631619584"
+                }
+            }
+        },
+        "bastionhostaz1": {
+            "Type": "AWS::EC2::Instance",
+            "Properties": {
+                "ImageId": {
+                    "Fn::FindInMap": [
+                        "RegionMap",
+                        {
+                            "Ref": "AWS::Region"
+                        },
+                        "AMI"
+                    ]
+                },
+                "AvailabilityZone": {
+                    "Fn::Select": [
+                        "0",
+                        {
+                            "Fn::GetAZs": ""
+                        }
+                    ]
+                },
+                "KeyName": {
+                    "Ref": "BastionKey"
+                },
+                "BlockDeviceMappings": [
+                    {
+                        "DeviceName": "/dev/sdm",
+                        "Ebs": {
+                            "VolumeType": "io1",
+                            "Iops": "200",
+                            "DeleteOnTermination": "true",
+                            "VolumeSize": "20"
+                        }
+                    },
+                    {
+                        "DeviceName": "/dev/sdk",
+                        "NoDevice": {}
+                    }
+                ],
+                "InstanceType": {
+                    "Ref": "InstanceType"
+                },
+                "InstanceInitiatedShutdownBehavior": "terminate",
+                "PrivateIpAddress": {
+                    "Ref": "BastionPrivateIP"
+                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "bastionsg"
+                    }
+                ],
+                "SubnetId": {
+                    "Ref": "GatewaySubnetAZ1Pubic"
+                },
+                "SourceDestCheck": "false",
+                "Tenancy": "default",
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                "-",
+                                [
+                                    {
+                                        "Ref": "OmnicomNetwork"
+                                    },
+                                    {
+                                        "Ref": "vRACode"
+                                    },
+                                    {
+                                        "Ref": "AgencyCode"
+                                    },
+                                    {
+                                        "Ref": "OU"
+                                    },
+                                    {
+                                        "Ref": "PCode"
+                                    },
+                                    "bastionaz1"
+                                ]
+                            ]
+                        }
+                    }
+                ]
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "c61f79e6-f978-4d1a-aafb-3ac55237d652"
+                }
+            }
+        }
+    }
+}
